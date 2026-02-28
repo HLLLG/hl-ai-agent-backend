@@ -1,16 +1,19 @@
 package com.hl.hlaiagent.app;
 
 import com.hl.hlaiagent.advisor.MyLoggerAdvisor;
+import com.hl.hlaiagent.advisor.ProhibitedWordAdvisor;
+import com.hl.hlaiagent.advisor.ReReadingAdvisor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @Slf4j
@@ -26,19 +29,22 @@ public class LoveApp {
 
     /**
      * 构造方法，初始化ChatClient并设置系统提示和聊天记忆顾问
-     * @param dashScopeChatModel
+     * @param dashScopeChatModel 聊天模型
+     * @param jdbcChatMemoryRepository JDBC聊天记忆仓库（自动注入）
      */
-    public LoveApp(ChatModel dashScopeChatModel) {
-        // 创建聊天记忆，使用内存存储并限制最大消息数为10
-        ChatMemory chatMemory = MessageWindowChatMemory
-                .builder()
-                .chatMemoryRepository(new InMemoryChatMemoryRepository())
+    public LoveApp(ChatModel dashScopeChatModel, JdbcChatMemoryRepository jdbcChatMemoryRepository) {
+        // 使用 JDBC 持久化对话记忆到 MySQL
+        ChatMemory chatMemory = MessageWindowChatMemory.builder()
+                .chatMemoryRepository(jdbcChatMemoryRepository)
                 .maxMessages(10)
                 .build();
+
         this.chatClient = ChatClient.builder(dashScopeChatModel)
                 .defaultSystem(SYSTEM_PROMPT)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build(),
-                        MyLoggerAdvisor.builder().order(0).build())
+                        MyLoggerAdvisor.builder().order(0).build(),
+                        new ReReadingAdvisor(),
+                        ProhibitedWordAdvisor.builder().order(-1).build())
                 .build();
     }
 
@@ -56,7 +62,27 @@ public class LoveApp {
                 .call()
                 .chatResponse();
         String content = chatResponse.getResult().getOutput().getText();
-        log.info("content {}", content);
         return content;
+    }
+
+
+    record LoveReport(String title, List<String> suggestions) {
+    }
+
+    /**
+     * AI 对话并生成恋爱报告（每次对话后生成恋爱结果，标题为{用户名}的恋爱报告，内容为建议列表）
+     * @param message
+     * @param conversationId
+     * @return
+     */
+    public LoveReport doChatWithReport(String message, String conversationId) {
+        LoveReport loveReport = chatClient
+                .prompt()
+                .system(SYSTEM_PROMPT + "每次对话后都要生成恋爱结果，标题为{用户名}的恋爱报告，内容为建议列表")
+                .user(message)
+                .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversationId))
+                .call()
+                .entity(LoveReport.class);
+        return loveReport;
     }
 }

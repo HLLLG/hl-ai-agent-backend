@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 /**
  * Spring Ai 调用ai大模型（灵积）
  */
-@Component
+//@Component
 public class SpringAiAiInvoke implements CommandLineRunner {
 
     @Resource
