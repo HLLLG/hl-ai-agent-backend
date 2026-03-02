@@ -15,6 +15,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * 恋爱大师应用，提供恋爱心理咨询服务，支持单身、恋爱、已婚三种状态的用户，能够记忆多轮对话并生成个性化的恋爱建议报告。
+ */
 @Component
 @Slf4j
 public class LoveApp {
