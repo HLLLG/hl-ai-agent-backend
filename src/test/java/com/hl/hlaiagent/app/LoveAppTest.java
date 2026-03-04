@@ -1,14 +1,18 @@
 package com.hl.hlaiagent.app;
 
 import cn.hutool.core.lang.UUID;
+import com.alibaba.cloud.ai.dashscope.embedding.DashScopeEmbeddingModel;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
+import org.springframework.ai.embedding.EmbeddingRequest;
+import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
@@ -47,5 +51,27 @@ class LoveAppTest {
         message = userMessage.getText();
         LoveApp.LoveReport loveReport = loveApp.doChatWithReport(message, chatId);
         Assertions.assertNotNull(loveReport);
+    }
+
+    @Test
+    void doChatWithRag() {
+        String chatId = UUID.randomUUID().toString();
+        // 第一轮
+        String message = "我已经结婚了，但是婚后关系不太亲密，怎么办？";
+        String answer = loveApp.doChatWithRag(message, chatId);
+        Assertions.assertNotNull(answer);
+    }
+
+    @Resource
+    private DashScopeEmbeddingModel dashScopeEmbeddingModel;
+
+    @Test
+    void test() {
+        EmbeddingResponse resp = dashScopeEmbeddingModel.call(new EmbeddingRequest(
+                List.of("dim probe"),
+                null
+        ));
+        float[] vector = resp.getResult().getOutput(); // 不同版本可能是 List<Double>/float[]，按你的依赖调整
+        System.out.println(vector.length);
     }
 }

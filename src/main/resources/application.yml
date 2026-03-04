@@ -1,11 +1,15 @@
 spring:
   application:
     name: hl-ai-agent
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/hl_ai_agent?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai}
+#    username: root
+#    password: 123456
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/hl_ai_agent?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai}
-    username: root
-    password: 123456
+    url: jdbc:postgresql://rm-cn-hoh4ogj3i0001kjo.rwlb.rds.aliyuncs.com:5432/postgres
+    username: my_root
+    password: xxx
   ai:
     dashscope:
       api-key: ${AI_DASHSCOPE_API_KEY}
@@ -16,6 +20,12 @@ spring:
       base-url: http://localhost:11434
       chat:
         model: gemma3:1b
+    vectorstore:
+      pgvector:
+      index-type: HNSW
+      distance-type: COSINE_DISTANCE
+      dimensions: 1536
+      max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
     chat:
       memory:
         repository:
