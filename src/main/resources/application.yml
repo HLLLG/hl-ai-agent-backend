@@ -55,3 +55,9 @@ knife4j:
   enable: true
   setting:
     language: zh_cn
+github:
+  token: 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
+  owner: HLLLG
+  repo: hl-ai-agent-backend
+  branch: main
+  path: sql

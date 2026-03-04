@@ -61,17 +61,4 @@ class LoveAppTest {
         String answer = loveApp.doChatWithRag(message, chatId);
         Assertions.assertNotNull(answer);
     }
-
-    @Resource
-    private DashScopeEmbeddingModel dashScopeEmbeddingModel;
-
-    @Test
-    void test() {
-        EmbeddingResponse resp = dashScopeEmbeddingModel.call(new EmbeddingRequest(
-                List.of("dim probe"),
-                null
-        ));
-        float[] vector = resp.getResult().getOutput(); // 不同版本可能是 List<Double>/float[]，按你的依赖调整
-        System.out.println(vector.length);
-    }
 }

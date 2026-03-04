@@ -1,6 +1,10 @@
 package com.hl.hlaiagent.rag;
 
 import com.alibaba.cloud.ai.dashscope.embedding.DashScopeEmbeddingModel;
+import com.hl.hlaiagent.rag.documentReader.GitHubBatchDocumentReader;
+import com.hl.hlaiagent.rag.documentReader.GitHubDocumentReaderTemplate;
+import com.hl.hlaiagent.rag.documentReader.GitHubSingleDocumentReader;
+import com.hl.hlaiagent.rag.transformers.MyKeywordEnricher;
 import jakarta.annotation.Resource;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
@@ -22,10 +26,19 @@ public class LoveAppVectorStoreConfig {
     @Resource
     private MyKeywordEnricher myKeywordEnricher;
 
+    @Resource
+    private GitHubSingleDocumentReader gitHubSingleDocumentReader;
+
+    @Resource
+    private GitHubBatchDocumentReader gitHubBatchDocumentReader;
+
     @Bean
     VectorStore loveAppVectorStore(DashScopeEmbeddingModel dashScopeEmbeddingModel) {
         // 加载文档
-        List<Document> documents = loveAppDocumentLoader.loadDocuments();
+//        List<Document> documents = loveAppDocumentLoader.loadDocuments();
+        // 加载github文档
+        GitHubDocumentReaderTemplate gitHubDocumentReaderTemplate = gitHubBatchDocumentReader;
+        List<Document> documents = gitHubDocumentReaderTemplate.loadGitHubDocuments();
         // 创建基于内存的向量数据库
         SimpleVectorStore simpleVectorStore = SimpleVectorStore.builder(dashScopeEmbeddingModel).build();
         // 对文档进行关键词增强

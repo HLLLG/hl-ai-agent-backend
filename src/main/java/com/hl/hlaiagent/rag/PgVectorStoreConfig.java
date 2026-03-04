@@ -25,7 +25,7 @@ public class PgVectorStoreConfig {
      */
     private static final int EMBEDDING_DIMENSIONS = 1024;
 
-    @Bean
+//    @Bean
     public VectorStore pgVectorStoreStore(JdbcTemplate jdbcTemplate, EmbeddingModel dashscopeEmbeddingModel) {
         PgVectorStore vectorStore = PgVectorStore.builder(jdbcTemplate, dashscopeEmbeddingModel)
                 .dimensions(EMBEDDING_DIMENSIONS)

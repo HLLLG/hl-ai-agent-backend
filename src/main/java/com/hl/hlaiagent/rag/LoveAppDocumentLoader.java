@@ -1,9 +1,13 @@
 package com.hl.hlaiagent.rag;
 
+import com.alibaba.cloud.ai.parser.tika.TikaDocumentParser;
+import com.alibaba.cloud.ai.reader.github.GitHubDocumentReader;
+import com.alibaba.cloud.ai.reader.github.GitHubResource;
 import com.hl.hlaiagent.exception.BusinessException;
 import com.hl.hlaiagent.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.reader.ExtractedTextFormatter;
 import org.springframework.ai.reader.markdown.MarkdownDocumentReader;
 import org.springframework.ai.reader.markdown.config.MarkdownDocumentReaderConfig;
 import org.springframework.core.io.Resource;
@@ -28,6 +32,7 @@ public class LoveAppDocumentLoader {
         this.resourcePatternResolver = resourcePatternResolver;
     }
 
+    // Markdown 文档加载方法
     public List<Document> loadDocuments() {
         List<Document> documents = new ArrayList<>();
         try {
