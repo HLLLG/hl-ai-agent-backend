@@ -1,15 +1,11 @@
 spring:
   application:
     name: hl-ai-agent
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/hl_ai_agent?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai}
-#    username: root
-#    password: 123456
   datasource:
-    url: jdbc:postgresql://rm-cn-hoh4ogj3i0001kjo.rwlb.rds.aliyuncs.com:5432/postgres
-    username: my_root
-    password: xxx
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/hl_ai_agent?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true}
+    username: root
+    password: 123456
   ai:
     dashscope:
       api-key: ${AI_DASHSCOPE_API_KEY}
@@ -34,6 +30,22 @@ spring:
             platform: mysql
   profiles:
     active: local
+  mail:
+    host: ${MAIL_HOST:smtp.qq.com}
+    port: ${MAIL_PORT:465}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          timeout: 5000
+          connectiontimeout: 5000
+          writetimeout: 5000
 server:
   port: 8123
   servlet:
@@ -61,3 +73,6 @@ github:
   repo: hl-ai-agent-backend
   branch: main
   path: sql
+# searchApi
+search-api:
+  api-key: xxxx
