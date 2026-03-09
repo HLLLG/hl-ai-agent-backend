@@ -68,11 +68,11 @@ knife4j:
   setting:
     language: zh_cn
 github:
-  token: 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
+  token: ${GITHUB_TOKEN:xxxx}
   owner: HLLLG
   repo: hl-ai-agent-backend
   branch: main
   path: sql
 # searchApi
 search-api:
-  api-key: xxxx
+  api-key: ${SEARCH_API_KEY:xxxx}
