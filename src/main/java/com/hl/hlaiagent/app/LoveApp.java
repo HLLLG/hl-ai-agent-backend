@@ -16,6 +16,7 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
@@ -152,6 +153,26 @@ public class LoveApp {
                 .user(message)
                 .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .toolCallbacks(allTool)
+                .call()
+                .chatResponse();
+        return chatResponse.getResult().getOutput().getText();
+    }
+
+    @Resource
+    private SyncMcpToolCallbackProvider toolCallbackProvider;
+
+    /**
+     * AI 对话并调用工具（根据用户输入的内容，智能调用相关工具获取信息或执行操作，提升恋爱建议的实用性）
+     * @param message
+     * @param conversationId
+     * @return
+     */
+    public String doChatWithMcp(String message, String conversationId) {
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .user(message)
+                .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversationId))
+                .toolCallbacks(toolCallbackProvider)
                 .call()
                 .chatResponse();
         return chatResponse.getResult().getOutput().getText();
