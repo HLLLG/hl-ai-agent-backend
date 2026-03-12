@@ -17,6 +17,7 @@ import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryReposito
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
@@ -152,6 +153,20 @@ public class LoveApp {
                 .user(message)
                 .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .toolCallbacks(allTool)
+                .call()
+                .chatResponse();
+        return chatResponse.getResult().getOutput().getText();
+    }
+
+
+    @Resource
+    private ToolCallbackProvider toolCallbackProvider;
+
+    public String doChatWithMcp(String message, String conversationId) {
+        ChatResponse chatResponse = chatClient.prompt()
+                .user(message)
+                .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversationId))
+                .toolCallbacks(toolCallbackProvider)
                 .call()
                 .chatResponse();
         return chatResponse.getResult().getOutput().getText();
