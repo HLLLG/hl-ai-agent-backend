@@ -1,0 +1,15 @@
+# Using spring-ai-starter-mcp-server
+spring:
+  ai:
+    mcp:
+      server:
+        name: hl-image-search-mcp-server
+        version: 1.0.0
+        type: SYNC
+        # stdio
+        stdio: true
+  main:
+    # stdio 模式只通过标准输入输出通信，不需要启动 Web 容器。
+    web-application-type: none
+    # 关闭 Banner，避免污染 stdio 协议输出。
+    banner-mode: off

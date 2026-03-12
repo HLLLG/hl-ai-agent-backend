@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: hl-image-search-mcp-server
+  profiles:
+    active: sse
+
+# Pexels API credentials should be injected from the environment instead of being committed to source control.
+pexels:
+  api-key: ${PEXELS_API_KEY:}
+  base-url: https://api.pexels.com
+  connect-timeout: 5s
+  read-timeout: 20s
+
+server:
+  port: 8127
