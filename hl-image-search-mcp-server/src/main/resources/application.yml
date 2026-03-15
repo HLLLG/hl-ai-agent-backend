@@ -2,7 +2,7 @@ spring:
   application:
     name: hl-image-search-mcp-server
   profiles:
-    active: sse
+    active: stdio
 
 # Pexels API credentials should be injected from the environment instead of being committed to source control.
 pexels:

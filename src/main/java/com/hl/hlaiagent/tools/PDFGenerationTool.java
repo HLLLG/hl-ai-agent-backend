@@ -1,8 +1,10 @@
 package com.hl.hlaiagent.tools;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hl.hlaiagent.constant.FileConstant;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -12,6 +14,9 @@ import com.itextpdf.layout.element.Paragraph;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.core.io.ClassPathResource;
+
+import java.io.InputStream;
 
 /**
  * PDF 生成工具类，提供 PDF 文件生成功能。
@@ -20,6 +25,8 @@ import org.springframework.ai.tool.annotation.ToolParam;
 public class PDFGenerationTool {
 
     private static final String PDF_DIR = FileConstant.FILE_SAVE_PATH + "/pdf";
+
+    private static final String FONT_RESOURCE_PATH = "fonts/NotoSansSC-Regular.ttf";
 
     /**
      * 生成 PDF 文件。
@@ -48,8 +55,11 @@ public class PDFGenerationTool {
                 // 自定义字体
 //            String fontPath = Paths.get("src/main/resources/fonts/STSong-Light.ttf").toString();
 //            PdfFont pdfFont = PdfFontFactory.createFont(fontPath, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+                InputStream fontInputStream = new ClassPathResource(FONT_RESOURCE_PATH).getInputStream();
+                byte[] fontBytes = IoUtil.readBytes(fontInputStream);
+                PdfFont font = PdfFontFactory.createFont(fontBytes, PdfEncodings.IDENTITY_H);
                 // 设置字体，支持中文
-                PdfFont font = PdfFontFactory.createFont("STSong-Light", "UniGB-UCS2-H");
+//                PdfFont font = PdfFontFactory.createFont("STSong-Light", "UniGB-UCS2-H");
                 document.setFont(font);
                 // 写入内容并关闭文档
                 document.add(new Paragraph(content));

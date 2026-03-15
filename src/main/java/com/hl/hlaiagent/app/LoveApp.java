@@ -20,6 +20,7 @@ import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -74,6 +75,16 @@ public class LoveApp {
                 .chatResponse();
         String content = chatResponse.getResult().getOutput().getText();
         return content;
+    }
+
+    public Flux<String> doChatWithSse(String message, String conversationId) {
+        Flux<String> fluxContent = chatClient
+                .prompt()
+                .user(message)
+                .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversationId))
+                .stream()
+                .content();
+        return fluxContent;
     }
 
 

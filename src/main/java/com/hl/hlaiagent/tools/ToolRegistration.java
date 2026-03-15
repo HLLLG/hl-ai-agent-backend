@@ -27,6 +27,8 @@ public class ToolRegistration {
         TerminalOperationTool terminalOperationTool = new TerminalOperationTool();
         PDFGenerationTool pdfGenerationTool = new PDFGenerationTool();
         QQMailSendTool qqMailSendTool = new QQMailSendTool(mailSender, mailUsername);
+        AskHumanTool askHumanTool = new AskHumanTool();
+        TerminateTool terminateTool = new TerminateTool();
 
         return ToolCallbacks.from(
                 fileOperationTool,
@@ -35,7 +37,8 @@ public class ToolRegistration {
                 resourceDownloadTool,
                 terminalOperationTool,
                 pdfGenerationTool,
-                qqMailSendTool );
+                qqMailSendTool,
+                askHumanTool,
+                terminateTool);
     }
 }
-

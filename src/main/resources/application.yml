@@ -52,6 +52,7 @@ server:
     context-path: /api
 # springdoc-openapi????
 springdoc:
+  override-with-generic-response: false # 关闭springdoc从@ControllerAdvice 注解获取接口的响应信息
   swagger-ui:
     path: /swagger-ui.html
     tags-sorter: alpha
