@@ -40,8 +40,12 @@ public class WebSearchTool {
             // 3 解析搜索结果
             JSONObject jsonObject = JSONUtil.parseObj(response);
             JSONArray organicResults = jsonObject.getJSONArray("organic_results");
+            if (organicResults == null || organicResults.isEmpty()) {
+                return "No search results found.";
+            }
             // 只取前5条结果
-            List<Object> objects = organicResults.subList(0, 5);
+            int endIndex = Math.min(5, organicResults.size());
+            List<Object> objects = organicResults.subList(0, endIndex);
             // 4 格式化搜索结果
             StringBuilder resultBuilder = new StringBuilder();
             for (Object object : objects) {

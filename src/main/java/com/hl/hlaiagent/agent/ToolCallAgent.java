@@ -3,7 +3,6 @@ package com.hl.hlaiagent.agent;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
-import com.hl.hlaiagent.advisor.MyLoggerAdvisor;
 import com.hl.hlaiagent.agent.model.AgentState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,15 +12,14 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.ToolResponseMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.ai.tool.ToolCallback;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 工具调用代理类，继承自反应式代理类，定义了工具调用代理的特定行为和方法。工具调用代理在执行任务时会根据当前的输入和环境进行思考和行动，以实现更智能和灵活的工具调用行为。
@@ -41,13 +39,16 @@ public class ToolCallAgent extends ReactAgent {
     private final ToolCallingManager toolCallingManager;
 
     // 聊天选项，定义了代理在进行工具调用时的聊天选项和配置
-    private final ChatOptions chatOptions;
+    private final DashScopeChatOptions chatOptions;
 
     public ToolCallAgent(ToolCallback[] availableTools) {
         super();
         this.availableTools = availableTools;
         this.toolCallingManager = ToolCallingManager.builder().build();
-        this.chatOptions = DashScopeChatOptions.builder().build();
+        this.chatOptions = DashScopeChatOptions.builder()
+                .internalToolExecutionEnabled(false)
+                .toolCallbacks(Arrays.asList(availableTools))
+                .build();
     }
 
     /**
@@ -66,7 +67,11 @@ public class ToolCallAgent extends ReactAgent {
         try {
             // 调用聊天模型进行工具调用，获取工具调用结果
             ChatResponse chatResponse =
-                    this.getChatClient().prompt(prompt).system(this.getSystemPrompt()).toolCallbacks(availableTools).call().chatResponse();
+                    this.getChatClient()
+                            .prompt(prompt)
+                            .system(this.getSystemPrompt())
+                            .call()
+                            .chatResponse();
             // 将工具调用结果保存到代理的状态中，以便后续的行动方法可以使用这些结果进行决策和操作
             this.toolCallChatResponse = chatResponse;
             AssistantMessage assistantMessage = chatResponse.getResult().getOutput();

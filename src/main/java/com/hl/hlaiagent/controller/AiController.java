@@ -35,23 +35,23 @@ public class AiController {
     }
 
     @GetMapping(value = "/love_app/chat/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<String> loveAppChatSse(String message, String conversationId) {
-        return loveApp.doChatWithSse(message, conversationId);
+    public Flux<String> doChatWithLoveAppSse(String message, String conversationId) {
+        return loveApp.doChatWithStream(message, conversationId);
     }
 
     @GetMapping(value = "/love_app/chat/server_sent")
-    public Flux<ServerSentEvent<String>> loveAppChatServerSent(String message, String conversationId) {
-        return loveApp.doChatWithSse(message, conversationId)
+    public Flux<ServerSentEvent<String>> doChatWithLoveAppServerSent(String message, String conversationId) {
+        return loveApp.doChatWithStream(message, conversationId)
                 .map(chunk -> ServerSentEvent.<String>builder()
                         .data(chunk)
                         .build());
     }
 
     @GetMapping(value = "/love_app/chat/sse_emitter")
-    public SseEmitter loveAppChatSseEmitter(String message, String conversationId) {
+    public SseEmitter doChatWithLoveAppSseEmitter(String message, String conversationId) {
         SseEmitter emitter = new SseEmitter(180000L); // 设置超时时间为180秒
         // 通过SseEmitter发送数据
-        loveApp.doChatWithSse(message, conversationId)
+        loveApp.doChatWithStream(message, conversationId)
                 .subscribe(
                         chunk -> {
                             try {
@@ -66,8 +66,8 @@ public class AiController {
         return emitter;
     }
 
-    @GetMapping("/agent/chat")
-    public SseEmitter agentChat(String message) {
+    @GetMapping("/manus/chat")
+    public SseEmitter doChatWithManus(String message) {
         HlManus hlManus = new HlManus(allTools, dashscopeChatModel);
         return  hlManus.runStream(message);
     }
