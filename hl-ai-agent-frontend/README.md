@@ -26,11 +26,26 @@ npm run dev
 - `/api/ai/love_app/chat/sse?message=xxx&conversationId=xxx`
 - `/api/ai/manus/chat?message=xxx`
 
+开发环境下，前端代码仍统一请求相对路径 `/api`，再由 Vite 开发服务器代理到本地后端 `localhost:8123`。
+
 ## 构建
 
 ```bash
 npm run build
 ```
+
+## 生产部署说明
+
+- 生产构建后，前端会强制使用相对路径 `/api`
+- 适合同域名部署，例如：前端页面与后端接口都挂在 `https://your-domain.com`
+- 服务器需要将 `/api` 反向代理到 Spring Boot 服务
+
+示例：
+
+- 页面：`https://your-domain.com/`
+- 接口：`https://your-domain.com/api/ai/...`
+
+这样生产包中不会写入 `localhost` 地址。
 
 ## 说明
 

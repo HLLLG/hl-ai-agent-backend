@@ -1,9 +1,11 @@
 import axios from 'axios';
 
 const defaultBaseURL = '/api';
+const envBaseURL = import.meta.env.VITE_API_BASE_URL?.trim();
+const baseURL = import.meta.env.PROD ? defaultBaseURL : envBaseURL || defaultBaseURL;
 
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? defaultBaseURL,
+  baseURL,
   timeout: 60000,
 });
 
